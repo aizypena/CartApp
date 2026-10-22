@@ -7,6 +7,7 @@ export const PRODUCTS = [
     price: 4495,
     rating: 4.8,
     badge: 'Popular',
+    image: require('../../assets/images/products/keyboard.jpg'),
   },
   {
     id: '2',
@@ -16,6 +17,7 @@ export const PRODUCTS = [
     price: 2999,
     rating: 4.6,
     badge: 'Ergonomic',
+    image: require('../../assets/images/products/mouse.jpg'),
   },
   {
     id: '3',
@@ -34,6 +36,7 @@ export const PRODUCTS = [
     price: 3950,
     rating: 4.5,
     badge: 'Waterproof',
+    image: require('../../assets/images/products/speaker.jpg'),
   },
   {
     id: '5',
@@ -43,5 +46,6 @@ export const PRODUCTS = [
     price: 12499,
     rating: 4.7,
     badge: 'Best Seller',
+    image: require('../../assets/images/products/chair.jpg'),
   },
 ];
