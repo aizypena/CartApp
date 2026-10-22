@@ -3,6 +3,15 @@ import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { useCart } from '../context/CartContext';
 import { formatPrice } from '../utils/format';
 
+function Row({ label, value, valueClassName = 'text-ink' }) {
+  return (
+    <View className="flex-row justify-between mb-2">
+      <Text className="text-sm text-body">{label}</Text>
+      <Text className={`text-sm font-medium ${valueClassName}`}>{value}</Text>
+    </View>
+  );
+}
+
 export default function OrderSummary() {
   const {
     totalItemCount,
@@ -20,37 +29,36 @@ export default function OrderSummary() {
   const canApply = voucherCode.trim().length > 0;
 
   return (
-    <View className="bg-slate-900 p-6 rounded-3xl border border-slate-800">
-      <Text className="text-lg font-bold text-white mb-4">Order Summary</Text>
-
-      {/* SUBTOTAL */}
-      <View className="flex-row justify-between mb-3">
-        <Text className="text-slate-400 text-sm font-medium">Subtotal ({totalItemCount} items)</Text>
-        <Text className="font-bold text-white text-base">{formatPrice(subtotal)}</Text>
-      </View>
+    <View className="bg-surface p-5 rounded-2xl border border-line">
+      <Text className="text-base font-semibold text-ink mb-4">Order summary</Text>
 
       {/* VOUCHER: applied state or input */}
       {appliedVoucher ? (
-        <View className="bg-emerald-950/60 border border-emerald-500/40 p-3 rounded-2xl my-2 flex-row justify-between items-center">
-          <View>
-            <Text className="text-emerald-300 text-xs font-bold">
-              ✓ "{appliedVoucher.code}" applied · {appliedVoucher.label}
+        <View className="bg-accent-soft px-4 py-3 rounded-xl mb-4 flex-row justify-between items-center">
+          <View className="flex-1 mr-3">
+            <Text className="text-xs text-accent font-semibold uppercase tracking-wider">
+              Voucher applied
             </Text>
-            <TouchableOpacity onPress={removeVoucher} activeOpacity={0.7} className="mt-1">
-              <Text className="text-emerald-500 text-[11px] font-semibold underline">Remove voucher</Text>
-            </TouchableOpacity>
+            <Text className="text-sm text-ink mt-0.5">
+              {appliedVoucher.code} · {appliedVoucher.label}
+            </Text>
           </View>
-          <Text className="text-emerald-400 text-sm font-bold">-{formatPrice(discountAmount)}</Text>
+          <TouchableOpacity onPress={removeVoucher} activeOpacity={0.6} className="py-1">
+            <Text className="text-xs font-medium text-body underline">Remove</Text>
+          </TouchableOpacity>
         </View>
       ) : (
-        <View className="my-2">
-          <View className="flex-row items-center">
+        <View className="mb-4">
+          <Text className="text-xs font-medium text-muted uppercase tracking-wider mb-2">
+            Voucher code
+          </Text>
+          <View className="flex-row">
             <TextInput
-              className={`flex-1 bg-slate-950 border rounded-l-2xl p-3.5 text-white text-sm ${
-                voucherError ? 'border-rose-500/60' : 'border-slate-800'
+              className={`flex-1 bg-canvas border rounded-xl px-4 py-3 text-ink text-sm mr-2 ${
+                voucherError ? 'border-danger' : 'border-line'
               }`}
-              placeholder="Voucher code"
-              placeholderTextColor="#64748b"
+              placeholder="Enter code"
+              placeholderTextColor="#A3A5AA"
               value={voucherCode}
               onChangeText={setVoucherCode}
               onSubmitEditing={applyVoucher}
@@ -61,39 +69,46 @@ export default function OrderSummary() {
             <TouchableOpacity
               onPress={applyVoucher}
               disabled={!canApply}
-              activeOpacity={0.7}
-              className={`px-5 py-3.5 rounded-r-2xl ${canApply ? 'bg-indigo-600' : 'bg-slate-700'}`}
+              activeOpacity={0.8}
+              className={`px-5 rounded-xl items-center justify-center ${canApply ? 'bg-ink' : 'bg-subtle'}`}
             >
-              <Text className="text-white font-bold text-sm">Apply</Text>
+              <Text className={`font-semibold text-sm ${canApply ? 'text-white' : 'text-muted'}`}>
+                Apply
+              </Text>
             </TouchableOpacity>
           </View>
           {voucherError ? (
-            <Text className="text-rose-400 text-[11px] mt-1 ml-1">{voucherError}</Text>
+            <Text className="text-danger text-xs mt-2">{voucherError}</Text>
           ) : (
-            <Text className="text-slate-500 text-[11px] mt-1 ml-1">
-              💡 Tip: Enter <Text className="font-bold text-indigo-400">discount10</Text> for 10% off
+            <Text className="text-muted text-xs mt-2">
+              Use <Text className="font-semibold text-body">discount10</Text> for 10% off your order.
             </Text>
           )}
         </View>
       )}
 
+      {/* LINE ITEMS */}
+      <Row label={`Subtotal (${totalItemCount} ${totalItemCount === 1 ? 'item' : 'items'})`} value={formatPrice(subtotal)} />
+      {appliedVoucher && (
+        <Row label="Discount (10%)" value={`−${formatPrice(discountAmount)}`} valueClassName="text-accent" />
+      )}
+      <Row label="Shipping" value="Free" />
+
       {/* FINAL TOTAL */}
-      <View className="border-t border-slate-800 pt-4 mt-2">
-        <View className="flex-row justify-between items-center">
-          <Text className="text-xl font-black text-white">Total</Text>
-          <View className="items-end">
-            {appliedVoucher && (
-              <Text className="text-slate-500 text-sm line-through">{formatPrice(subtotal)}</Text>
-            )}
-            <Text className="text-3xl font-black text-indigo-400">{formatPrice(finalTotal)}</Text>
-          </View>
+      <View className="flex-row justify-between items-end border-t border-line pt-4 mt-2">
+        <Text className="text-base font-semibold text-ink">Total</Text>
+        <View className="items-end">
+          {appliedVoucher && (
+            <Text className="text-xs text-muted line-through mb-0.5">{formatPrice(subtotal)}</Text>
+          )}
+          <Text className="text-2xl font-semibold text-ink tracking-tight">{formatPrice(finalTotal)}</Text>
         </View>
-        {appliedVoucher && (
-          <Text className="text-emerald-400 text-xs font-semibold text-right mt-1">
-            You save {formatPrice(discountAmount)}
-          </Text>
-        )}
       </View>
+      {appliedVoucher && (
+        <Text className="text-accent text-xs font-medium text-right mt-1">
+          You save {formatPrice(discountAmount)}
+        </Text>
+      )}
     </View>
   );
 }

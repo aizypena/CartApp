@@ -1,48 +1,47 @@
 import React, { memo } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { formatPrice } from '../utils/format';
+import ProductThumb from './ProductThumb';
 
 function ProductCard({ product, quantityInCart, onAdd }) {
-  return (
-    <View className="bg-slate-900 p-5 mb-4 rounded-3xl border border-slate-800">
-      {/* TOP ROW: ICON, BADGE, RATING, PRICE */}
-      <View className="flex-row justify-between items-center mb-3">
-        <View className="flex-row items-center">
-          <View className="w-12 h-12 bg-slate-800 rounded-2xl items-center justify-center border border-slate-700/60 mr-3">
-            <Text className="text-2xl">{product.icon}</Text>
-          </View>
-          <View>
-            <View className="bg-indigo-500/10 border border-indigo-500/30 px-2.5 py-0.5 rounded-full self-start mb-1">
-              <Text className="text-indigo-400 text-[10px] font-bold uppercase">{product.badge}</Text>
-            </View>
-            <Text className="text-slate-400 text-xs font-semibold">⭐ {product.rating} / 5.0</Text>
-          </View>
-        </View>
+  const inCart = quantityInCart > 0;
 
-        <Text className="text-2xl font-black text-indigo-400">{formatPrice(product.price)}</Text>
+  return (
+    <View className="bg-surface p-4 mb-3 rounded-2xl border border-line">
+      <View className="flex-row">
+        <ProductThumb product={product} />
+
+        <View className="flex-1 ml-4">
+          <View className="flex-row justify-between items-start">
+            <Text className="flex-1 text-base font-semibold text-ink mr-3" numberOfLines={2}>
+              {product.productName}
+            </Text>
+            <Text className="text-base font-semibold text-ink">{formatPrice(product.price)}</Text>
+          </View>
+
+          <Text className="text-xs text-muted mt-1">
+            {product.category} · {product.rating.toFixed(1)} rating
+          </Text>
+        </View>
       </View>
 
-      {/* TITLE & DESCRIPTION */}
-      <Text className="text-lg font-bold text-white mb-1">{product.productName}</Text>
-      <Text className="text-slate-300 text-sm mb-4 leading-relaxed">{product.description}</Text>
+      <Text className="text-sm text-body leading-5 mt-3">{product.description}</Text>
 
-      {/* ACTION BUTTON */}
-      <TouchableOpacity
-        onPress={() => onAdd(product)}
-        activeOpacity={0.7}
-        accessibilityRole="button"
-        accessibilityLabel={`Add ${product.productName} to cart`}
-        className="bg-indigo-600 py-3.5 px-4 rounded-2xl flex-row items-center justify-center"
-      >
-        <Text className="text-white font-bold text-sm mr-2">
-          {quantityInCart > 0 ? 'Add Another (+1)' : 'Add to Cart'}
-        </Text>
-        {quantityInCart > 0 && (
-          <View className="bg-indigo-800 px-2.5 py-0.5 rounded-full">
-            <Text className="text-white font-bold text-xs">{quantityInCart} in cart</Text>
-          </View>
-        )}
-      </TouchableOpacity>
+      <View className="flex-row items-center justify-between mt-4">
+        <Text className="text-xs font-medium text-muted uppercase tracking-wider">{product.badge}</Text>
+
+        <TouchableOpacity
+          onPress={() => onAdd(product)}
+          activeOpacity={0.8}
+          accessibilityRole="button"
+          accessibilityLabel={`Add ${product.productName} to cart`}
+          className={`px-4 py-2.5 rounded-xl ${inCart ? 'bg-surface border border-ink' : 'bg-ink'}`}
+        >
+          <Text className={`text-sm font-semibold ${inCart ? 'text-ink' : 'text-white'}`}>
+            {inCart ? `Add another · ${quantityInCart} in cart` : 'Add to cart'}
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }

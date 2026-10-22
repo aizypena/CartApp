@@ -4,13 +4,15 @@
     "slug": "CartApp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "dark",
-    "backgroundColor": "#020617",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#F6F5F2",
     "splash": {
       "resizeMode": "contain",
-      "backgroundColor": "#020617"
+      "backgroundColor": "#F6F5F2"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.aizypena.cartapp"
@@ -19,7 +21,7 @@
       "package": "com.aizypena.cartapp",
       "versionCode": 1,
       "adaptiveIcon": {
-        "backgroundColor": "#020617"
+        "backgroundColor": "#F6F5F2"
       }
     }
   }

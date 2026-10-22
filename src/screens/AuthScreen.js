@@ -11,6 +11,15 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+function Field({ label, children }) {
+  return (
+    <View className="mb-4">
+      <Text className="text-xs font-medium text-body mb-2">{label}</Text>
+      {children}
+    </View>
+  );
+}
+
 export default function AuthScreen({ onBack, onLoginSuccess, usersDB, setUsersDB }) {
   const [isLoginView, setIsLoginView] = useState(true);
   const [email, setEmail] = useState('');
@@ -22,7 +31,7 @@ export default function AuthScreen({ onBack, onLoginSuccess, usersDB, setUsersDB
     const trimmedPassword = password.trim();
 
     if (!trimmedEmail || !trimmedPassword) {
-      Alert.alert('Missing Fields', 'Please enter both your email and password.');
+      Alert.alert('Missing fields', 'Please enter both your email and password.');
       return;
     }
 
@@ -33,16 +42,16 @@ export default function AuthScreen({ onBack, onLoginSuccess, usersDB, setUsersDB
       if (user) {
         onLoginSuccess(user.email);
       } else {
-        Alert.alert('Authentication Failed', 'Invalid email or password. Please try again.');
+        Alert.alert('Sign in failed', 'Invalid email or password. Please try again.');
       }
     } else {
       const userExists = usersDB.find((u) => u.email.toLowerCase() === trimmedEmail.toLowerCase());
       if (userExists) {
-        Alert.alert('Account Exists', 'An account with this email already exists.');
+        Alert.alert('Account exists', 'An account with this email already exists.');
         return;
       }
       setUsersDB([...usersDB, { email: trimmedEmail, password: trimmedPassword }]);
-      Alert.alert('Success 🎉', 'Account created successfully! You can now log in.');
+      Alert.alert('Account created', 'You can now sign in with your new account.');
       setIsLoginView(true);
       setPassword('');
     }
@@ -54,166 +63,110 @@ export default function AuthScreen({ onBack, onLoginSuccess, usersDB, setUsersDB
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-950">
-      {/* Decorative background glows */}
-      <View className="absolute -top-10 -left-10 w-72 h-72 bg-indigo-600/20 rounded-full -z-10" />
-      <View className="absolute -bottom-10 -right-10 w-72 h-72 bg-violet-600/15 rounded-full -z-10" />
-
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className="flex-1"
-      >
+    <SafeAreaView className="flex-1 bg-canvas">
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1">
         <ScrollView
-          contentContainerClassName="px-6 py-6 justify-between flex-grow"
+          contentContainerClassName="px-6 pt-2 pb-6 flex-grow"
           keyboardShouldPersistTaps="handled"
         >
-          {/* HEADER / BACK BUTTON */}
-          <View className="flex-row items-center justify-between mt-2 mb-6">
-            <TouchableOpacity
-              onPress={onBack}
-              activeOpacity={0.7}
-              className="bg-slate-900 border border-slate-800 px-4 py-2.5 rounded-2xl flex-row items-center active:bg-slate-800"
-            >
-              <Text className="text-white font-bold text-base mr-2">←</Text>
-              <Text className="text-slate-200 font-semibold text-sm">Back</Text>
+          {/* HEADER */}
+          <View className="flex-row items-center justify-between mb-10">
+            <TouchableOpacity onPress={onBack} activeOpacity={0.6} className="py-2 pr-3">
+              <Text className="text-sm text-body">← Back</Text>
             </TouchableOpacity>
-
-            <View className="bg-indigo-500/10 border border-indigo-500/30 px-3 py-1 rounded-full">
-              <Text className="text-indigo-400 font-bold text-xs uppercase tracking-wider">
-                TechStore Account
-              </Text>
-            </View>
+            <Text className="text-base font-semibold text-ink tracking-tight">TechStore</Text>
           </View>
 
-          {/* MAIN AUTH CARD */}
-          <View className="bg-slate-900/90 p-6 rounded-3xl border border-slate-800 shadow-2xl my-auto">
+          <Text className="text-3xl font-semibold text-ink tracking-tight">
+            {isLoginView ? 'Sign in' : 'Create account'}
+          </Text>
+          <Text className="text-sm text-muted mt-2 mb-8">
+            {isLoginView
+              ? 'Welcome back. Enter your details to continue.'
+              : 'Create an account to start shopping.'}
+          </Text>
 
-            {/* SEGMENTED TAB SWITCHER */}
-            <View className="flex-row bg-slate-950 p-1.5 rounded-2xl border border-slate-800/80 mb-6">
+          {/* SEGMENTED SWITCHER */}
+          <View className="flex-row bg-subtle p-1 rounded-xl mb-6">
+            {[
+              { label: 'Sign in', active: isLoginView, value: true },
+              { label: 'Create account', active: !isLoginView, value: false },
+            ].map((tab) => (
               <TouchableOpacity
-                onPress={() => setIsLoginView(true)}
-                activeOpacity={0.7}
-                className={`flex-1 py-3 rounded-xl items-center justify-center ${
-                  isLoginView ? 'bg-indigo-600' : 'bg-transparent'
-                }`}
+                key={tab.label}
+                onPress={() => setIsLoginView(tab.value)}
+                activeOpacity={0.8}
+                className={`flex-1 py-2.5 rounded-lg items-center ${tab.active ? 'bg-surface' : ''}`}
               >
-                <Text className={`font-bold text-sm ${isLoginView ? 'text-white' : 'text-slate-400'}`}>
-                  Sign In
+                <Text className={`text-sm ${tab.active ? 'text-ink font-semibold' : 'text-muted'}`}>
+                  {tab.label}
                 </Text>
               </TouchableOpacity>
+            ))}
+          </View>
 
-              <TouchableOpacity
-                onPress={() => setIsLoginView(false)}
-                activeOpacity={0.7}
-                className={`flex-1 py-3 rounded-xl items-center justify-center ${
-                  !isLoginView ? 'bg-indigo-600' : 'bg-transparent'
-                }`}
-              >
-                <Text className={`font-bold text-sm ${!isLoginView ? 'text-white' : 'text-slate-400'}`}>
-                  Create Account
-                </Text>
-              </TouchableOpacity>
-            </View>
+          <Field label="Email">
+            <TextInput
+              className="bg-surface text-ink px-4 py-3.5 rounded-xl border border-line text-base"
+              placeholder="name@example.com"
+              placeholderTextColor="#A3A5AA"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardType="email-address"
+            />
+          </Field>
 
-            <Text className="text-2xl font-black text-white text-center mb-1">
-              {isLoginView ? 'Welcome Back 👋' : 'Join TechStore 🚀'}
-            </Text>
-            <Text className="text-slate-300 text-sm text-center mb-6 leading-relaxed">
-              {isLoginView
-                ? 'Enter your credentials to access your saved cart and orders.'
-                : 'Create a new account to unlock member discounts & fast checkout.'}
-            </Text>
-
-            {/* DEMO CREDS BADGE / QUICK BUTTON */}
-            {isLoginView && (
-              <TouchableOpacity
-                onPress={fillDemoCredentials}
-                activeOpacity={0.7}
-                className="bg-indigo-950/60 border border-indigo-500/30 p-3 rounded-2xl mb-5 flex-row items-center justify-between"
-              >
-                <View className="flex-row items-center flex-1 mr-2">
-                  <Text className="text-base mr-2">💡</Text>
-                  <Text className="text-indigo-200 text-xs font-medium">
-                    Quick Demo: <Text className="font-bold text-indigo-300">test@test.com</Text> /{' '}
-                    <Text className="font-bold text-indigo-300">password123</Text>
-                  </Text>
-                </View>
-                <Text className="text-indigo-400 text-xs font-bold">Auto-fill</Text>
-              </TouchableOpacity>
-            )}
-
-            {/* EMAIL INPUT */}
-            <View className="mb-4">
-              <Text className="text-slate-200 font-semibold text-xs uppercase tracking-wider mb-2">
-                Email Address
-              </Text>
+          <Field label="Password">
+            <View className="flex-row items-center bg-surface border border-line rounded-xl pl-4 pr-2">
               <TextInput
-                className="bg-slate-950 text-white p-4 rounded-2xl border border-slate-800 text-base"
-                placeholder="name@example.com"
-                placeholderTextColor="#64748b"
-                value={email}
-                onChangeText={setEmail}
-                autoCapitalize="none"
-                keyboardType="email-address"
+                className="flex-1 text-ink py-3.5 text-base"
+                placeholder="Enter your password"
+                placeholderTextColor="#A3A5AA"
+                value={password}
+                onChangeText={setPassword}
+                onSubmitEditing={handleAuth}
+                secureTextEntry={!showPassword}
               />
-            </View>
-
-            {/* PASSWORD INPUT */}
-            <View className="mb-6">
-              <Text className="text-slate-200 font-semibold text-xs uppercase tracking-wider mb-2">
-                Password
-              </Text>
-              <View className="flex-row items-center bg-slate-950 border border-slate-800 rounded-2xl px-4">
-                <TextInput
-                  className="flex-1 text-white py-4 text-base"
-                  placeholder="••••••••"
-                  placeholderTextColor="#64748b"
-                  value={password}
-                  onChangeText={setPassword}
-                  secureTextEntry={!showPassword}
-                />
-                <TouchableOpacity
-                  onPress={() => setShowPassword(!showPassword)}
-                  activeOpacity={0.7}
-                  className="p-2"
-                >
-                  <Text className="text-slate-400 text-sm">{showPassword ? '🙈' : '👁️'}</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            {/* SUBMIT BUTTON */}
-            <TouchableOpacity
-              onPress={handleAuth}
-              activeOpacity={0.8}
-              className="bg-indigo-600 py-4 rounded-2xl items-center shadow-lg active:bg-indigo-500"
-            >
-              <Text className="text-white font-bold text-base">
-                {isLoginView ? 'Sign In' : 'Create Account'}
-              </Text>
-            </TouchableOpacity>
-
-            {/* FOOTER SWITCH LINK */}
-            <View className="flex-row justify-center items-center mt-6">
-              <Text className="text-slate-400 text-sm">
-                {isLoginView ? "Don't have an account? " : 'Already registered? '}
-              </Text>
-              <TouchableOpacity onPress={() => setIsLoginView(!isLoginView)} activeOpacity={0.7}>
-                <Text className="text-indigo-400 font-bold text-sm">
-                  {isLoginView ? 'Sign Up' : 'Log In'}
-                </Text>
+              <TouchableOpacity
+                onPress={() => setShowPassword(!showPassword)}
+                activeOpacity={0.6}
+                className="px-2 py-2"
+              >
+                <Text className="text-xs font-medium text-body">{showPassword ? 'Hide' : 'Show'}</Text>
               </TouchableOpacity>
             </View>
+          </Field>
 
-          </View>
-
-          {/* BOTTOM TRUST BADGE */}
-          <View className="items-center mt-6 pb-2">
-            <Text className="text-slate-500 text-xs">
-              🔒 Demo only — accounts are stored in memory
+          {/* SUBMIT */}
+          <TouchableOpacity
+            onPress={handleAuth}
+            activeOpacity={0.85}
+            className="bg-ink py-4 rounded-2xl items-center mt-2"
+          >
+            <Text className="text-white font-semibold text-base">
+              {isLoginView ? 'Sign in' : 'Create account'}
             </Text>
-          </View>
+          </TouchableOpacity>
 
+          {/* DEMO CREDENTIALS */}
+          {isLoginView && (
+            <View className="mt-6 p-4 rounded-xl border border-dashed border-line flex-row items-center justify-between">
+              <View className="flex-1 mr-3">
+                <Text className="text-xs font-medium text-body">Demo account</Text>
+                <Text className="text-xs text-muted mt-0.5">test@test.com · password123</Text>
+              </View>
+              <TouchableOpacity onPress={fillDemoCredentials} activeOpacity={0.6} className="py-1">
+                <Text className="text-xs font-semibold text-ink underline">Use demo</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          <View className="flex-1" />
+          <Text className="text-xs text-muted text-center mt-8">
+            Demo app. Accounts are stored in memory only.
+          </Text>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

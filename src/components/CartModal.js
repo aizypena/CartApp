@@ -32,34 +32,37 @@ export default function CartModal({ visible, onClose, onCheckout }) {
         className="flex-1 justify-end"
       >
         {/* BACKDROP: tap outside the sheet to close */}
-        <Pressable className="absolute inset-0 bg-black/60" onPress={onClose} />
+        <Pressable className="absolute inset-0 bg-black/40" onPress={onClose} />
 
         <View
-          className="bg-slate-950 rounded-t-3xl border-t border-slate-800 max-h-[88%]"
-          style={{ paddingBottom: insets.bottom + 16 }}
+          className="bg-canvas rounded-t-3xl max-h-[88%]"
+          style={{ paddingBottom: insets.bottom + 12 }}
         >
-          {/* SHEET HEADER */}
-          <View className="flex-row justify-between items-center px-5 pt-5 pb-4 border-b border-slate-800">
+          {/* GRABBER + HEADER */}
+          <View className="items-center pt-2.5">
+            <View className="w-10 h-1 rounded-full bg-line" />
+          </View>
+          <View className="flex-row justify-between items-center px-5 pt-3 pb-4">
             <View>
-              <Text className="text-2xl font-black text-white">Your Cart 🛒</Text>
-              <Text className="text-slate-400 text-xs font-semibold mt-0.5">
+              <Text className="text-xl font-semibold text-ink tracking-tight">Your cart</Text>
+              <Text className="text-muted text-xs mt-0.5">
                 {totalItemCount} {totalItemCount === 1 ? 'item' : 'items'}
               </Text>
             </View>
             <TouchableOpacity
               onPress={onClose}
-              activeOpacity={0.7}
+              activeOpacity={0.6}
               accessibilityLabel="Close cart"
-              className="w-10 h-10 bg-slate-800 border border-slate-700 rounded-2xl items-center justify-center"
+              className="w-9 h-9 bg-subtle rounded-full items-center justify-center"
             >
-              <Text className="text-white font-bold text-base">✕</Text>
+              <Text className="text-body text-lg leading-5">×</Text>
             </TouchableOpacity>
           </View>
 
-          <ScrollView contentContainerClassName="p-4" keyboardShouldPersistTaps="handled">
+          <ScrollView contentContainerClassName="px-4 pb-4" keyboardShouldPersistTaps="handled">
             <CartList />
             {cart.length > 0 && (
-              <View className="mt-4">
+              <View className="mt-3">
                 <OrderSummary />
               </View>
             )}
@@ -67,14 +70,14 @@ export default function CartModal({ visible, onClose, onCheckout }) {
 
           {/* CHECKOUT */}
           {cart.length > 0 && (
-            <View className="px-4 pt-2">
+            <View className="px-4 pt-3 border-t border-line">
               <TouchableOpacity
                 onPress={onCheckout}
-                activeOpacity={0.9}
-                className="bg-indigo-600 flex-row justify-between items-center p-4 rounded-3xl"
+                activeOpacity={0.85}
+                className="bg-ink flex-row justify-between items-center px-5 py-4 rounded-2xl"
               >
-                <Text className="text-white text-xl font-black">{formatPrice(finalTotal)}</Text>
-                <Text className="text-white font-black text-sm">Checkout →</Text>
+                <Text className="text-white font-semibold text-base">Checkout</Text>
+                <Text className="text-white font-semibold text-base">{formatPrice(finalTotal)}</Text>
               </TouchableOpacity>
             </View>
           )}
