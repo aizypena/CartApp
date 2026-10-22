@@ -3,7 +3,21 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { formatPrice } from '../utils/format';
 import ProductThumb from './ProductThumb';
 
-function ProductCard({ product, quantityInCart, onAdd }) {
+function StepButton({ label, onPress, accessibilityLabel }) {
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={0.7}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      className="w-10 h-10 items-center justify-center"
+    >
+      <Text className="text-white text-xl leading-6">{label}</Text>
+    </TouchableOpacity>
+  );
+}
+
+function ProductCard({ product, quantityInCart, onAdd, onDecrease }) {
   const inCart = quantityInCart > 0;
 
   return (
@@ -30,17 +44,36 @@ function ProductCard({ product, quantityInCart, onAdd }) {
       <View className="flex-row items-center justify-between mt-4">
         <Text className="text-xs font-medium text-muted uppercase tracking-wider">{product.badge}</Text>
 
-        <TouchableOpacity
-          onPress={() => onAdd(product)}
-          activeOpacity={0.8}
-          accessibilityRole="button"
-          accessibilityLabel={`Add ${product.productName} to cart`}
-          className={`px-4 py-2.5 rounded-xl ${inCart ? 'bg-surface border border-ink' : 'bg-ink'}`}
-        >
-          <Text className={`text-sm font-semibold ${inCart ? 'text-ink' : 'text-white'}`}>
-            {inCart ? `Add another · ${quantityInCart} in cart` : 'Add to cart'}
-          </Text>
-        </TouchableOpacity>
+        {inCart ? (
+          // Once in the cart, the button becomes a quantity stepper (− at 1 removes it)
+          <View className="flex-row items-center bg-ink rounded-xl">
+            <StepButton
+              label="−"
+              onPress={() => onDecrease(product.id)}
+              accessibilityLabel={
+                quantityInCart === 1
+                  ? `Remove ${product.productName} from cart`
+                  : `Decrease ${product.productName} quantity`
+              }
+            />
+            <Text className="min-w-8 text-center text-white text-sm font-semibold">{quantityInCart}</Text>
+            <StepButton
+              label="+"
+              onPress={() => onAdd(product)}
+              accessibilityLabel={`Increase ${product.productName} quantity`}
+            />
+          </View>
+        ) : (
+          <TouchableOpacity
+            onPress={() => onAdd(product)}
+            activeOpacity={0.8}
+            accessibilityRole="button"
+            accessibilityLabel={`Add ${product.productName} to cart`}
+            className="bg-ink px-4 h-10 rounded-xl items-center justify-center"
+          >
+            <Text className="text-sm font-semibold text-white">Add to cart</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );

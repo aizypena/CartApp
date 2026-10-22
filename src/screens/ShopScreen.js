@@ -10,7 +10,8 @@ import OrderSummary from '../components/OrderSummary';
 import Toast from '../components/Toast';
 
 export default function ShopScreen({ loggedInUser, onLogout }) {
-  const { products, cart, addToCart, clearCart, totalItemCount, finalTotal, toast } = useCart();
+  const { products, cart, addToCart, decreaseQuantity, clearCart, totalItemCount, finalTotal, toast } =
+    useCart();
 
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -120,6 +121,7 @@ export default function ShopScreen({ loggedInUser, onLogout }) {
             product={product}
             quantityInCart={quantities[product.id] ?? 0}
             onAdd={addToCart}
+            onDecrease={decreaseQuantity}
           />
         ))}
 

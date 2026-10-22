@@ -9,9 +9,9 @@ function StepperButton({ label, onPress, accessibilityLabel }) {
       onPress={onPress}
       activeOpacity={0.6}
       accessibilityLabel={accessibilityLabel}
-      className="w-8 h-8 items-center justify-center"
+      className="w-9 h-9 items-center justify-center bg-subtle rounded-lg"
     >
-      <Text className="text-ink text-lg leading-5">{label}</Text>
+      <Text className="text-ink text-lg font-medium leading-5">{label}</Text>
     </TouchableOpacity>
   );
 }
@@ -34,13 +34,13 @@ export default function CartItem({ item, isLast, onIncrease, onDecrease, onRemov
 
         <View className="flex-row items-center justify-between mt-3">
           {/* QUANTITY STEPPER */}
-          <View className="flex-row items-center border border-line rounded-lg">
+          <View className="flex-row items-center">
             <StepperButton
               label="−"
               onPress={() => onDecrease(item.id)}
               accessibilityLabel={`Decrease ${item.productName} quantity`}
             />
-            <Text className="w-8 text-center text-sm font-semibold text-ink">{item.quantity}</Text>
+            <Text className="w-10 text-center text-sm font-semibold text-ink">{item.quantity}</Text>
             <StepperButton
               label="+"
               onPress={() => onIncrease(item)}
@@ -53,9 +53,9 @@ export default function CartItem({ item, isLast, onIncrease, onDecrease, onRemov
             activeOpacity={0.6}
             accessibilityRole="button"
             accessibilityLabel={`Remove ${item.productName} from cart`}
-            className="py-1.5 px-1"
+            className="h-9 px-3 rounded-lg bg-danger-soft items-center justify-center"
           >
-            <Text className="text-xs font-medium text-danger">Remove</Text>
+            <Text className="text-xs font-semibold text-danger">Remove</Text>
           </TouchableOpacity>
         </View>
       </View>
