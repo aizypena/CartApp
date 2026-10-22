@@ -27,6 +27,7 @@ export const PRODUCTS = [
     price: 10990,
     rating: 4.9,
     badge: 'Top Rated',
+    image: require('../../assets/images/products/headphones.jpg'),
   },
   {
     id: '4',

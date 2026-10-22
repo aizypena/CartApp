@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Image } from 'react-native';
 
-// Muted tile tones per category, used in place of product photography
+// Muted tile tones per category, used when a product has no photo
 const TONES = {
   Peripherals: { bg: '#E9E6DF', fg: '#4A4335' },
   Audio: { bg: '#E3E8EC', fg: '#34424F' },
@@ -21,14 +21,30 @@ export const initials = (name) =>
     .join('');
 
 const SIZES = {
-  md: { box: 'w-14 h-14 rounded-xl', text: 'text-base' },
-  sm: { box: 'w-11 h-11 rounded-lg', text: 'text-sm' },
+  lg: { box: 'w-24 h-24 rounded-2xl', pad: 'p-1.5', text: 'text-xl' },
+  md: { box: 'w-14 h-14 rounded-xl', pad: 'p-1', text: 'text-base' },
+  sm: { box: 'w-14 h-14 rounded-lg', pad: 'p-1', text: 'text-sm' },
 };
 
 export default function ProductThumb({ product, size = 'md' }) {
-  const tone = getTone(product.category);
   const s = SIZES[size];
 
+  // Real product photo on a white tile (photos are shot on white backgrounds)
+  if (product.image) {
+    return (
+      <View className={`${s.box} ${s.pad} bg-surface border border-line overflow-hidden`}>
+        <Image
+          source={product.image}
+          resizeMode="contain"
+          accessibilityLabel={product.productName}
+          style={{ width: '100%', height: '100%' }}
+        />
+      </View>
+    );
+  }
+
+  // Fallback: initials on a category-tinted tile
+  const tone = getTone(product.category);
   return (
     <View className={`${s.box} items-center justify-center`} style={{ backgroundColor: tone.bg }}>
       <Text className={`${s.text} font-semibold tracking-wide`} style={{ color: tone.fg }}>

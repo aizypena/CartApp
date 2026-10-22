@@ -23,18 +23,20 @@ function ProductCard({ product, quantityInCart, onAdd, onDecrease }) {
   return (
     <View className="bg-surface p-4 mb-3 rounded-2xl border border-line">
       <View className="flex-row">
-        <ProductThumb product={product} />
+        <ProductThumb product={product} size="lg" />
 
-        <View className="flex-1 ml-4">
-          <View className="flex-row justify-between items-start">
-            <Text className="flex-1 text-base font-semibold text-ink mr-3" numberOfLines={2}>
+        <View className="flex-1 ml-4 justify-between">
+          <View>
+            <Text className="text-base font-semibold text-ink" numberOfLines={2}>
               {product.productName}
             </Text>
-            <Text className="text-base font-semibold text-ink">{formatPrice(product.price)}</Text>
+            <Text className="text-xs text-muted mt-1">
+              {product.category} · {product.rating.toFixed(1)} rating
+            </Text>
           </View>
 
-          <Text className="text-xs text-muted mt-1">
-            {product.category} · {product.rating.toFixed(1)} rating
+          <Text className="text-lg font-semibold text-ink tracking-tight mt-2">
+            {formatPrice(product.price)}
           </Text>
         </View>
       </View>
