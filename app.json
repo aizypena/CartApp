@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "CartApp",
+    "slug": "CartApp",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#020617",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#020617"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.aizypena.cartapp"
+    },
+    "android": {
+      "package": "com.aizypena.cartapp",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#020617"
+      }
+    }
+  }
+}

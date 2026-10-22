@@ -1,12 +1,36 @@
 {
+  "name": "cartapp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "build:apk": "eas build -p android --profile preview",
+    "build:apk:local": "expo prebuild -p android --clean && cd android && gradlew assembleRelease"
+  },
   "dependencies": {
-    "nativewind": "^4.2.7",
+    "expo": "^58.0.16",
+    "expo-status-bar": "~58.0.3",
+    "nativewind": "^4.0.36",
+    "react": "^19.3.0",
+    "react-native": "^0.88.0",
     "react-native-reanimated": "^4.7.1",
-    "react-native-safe-area-context": "^5.10.1"
+    "react-native-safe-area-context": "~5.10.1"
   },
   "devDependencies": {
-    "babel-preset-expo": "^58.0.18",
+    "@babel/core": "^7.20.0",
+    "babel-preset-expo": "~58.0.0",
     "prettier-plugin-tailwindcss": "^0.5.11",
     "tailwindcss": "^3.4.17"
+  },
+  "private": true,
+  "allowScripts": {
+    "expo": true,
+    "react-native": true,
+    "react-native-reanimated": true,
+    "react-native-safe-area-context": true,
+    "expo-status-bar": true
   }
 }
