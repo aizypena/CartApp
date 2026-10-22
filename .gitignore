@@ -11,6 +11,8 @@ expo-env.d.ts
 /android
 /ios
 *.apk
+# ...except the submitted build, which is committed on purpose
+!APKFile/*.apk
 *.aab
 *.ipa
 
