@@ -4,24 +4,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useCart } from '../context/CartContext';
 import { formatPrice } from '../utils/format';
 import ProductCard from '../components/ProductCard';
-import CartItem from '../components/CartItem';
+import CartList from '../components/CartList';
+import CartModal from '../components/CartModal';
 import OrderSummary from '../components/OrderSummary';
 import Toast from '../components/Toast';
 
 export default function ShopScreen({ loggedInUser, onLogout }) {
-  const {
-    products,
-    cart,
-    addToCart,
-    decreaseQuantity,
-    removeFromCart,
-    clearCart,
-    totalItemCount,
-    finalTotal,
-    toast,
-  } = useCart();
+  const { products, cart, addToCart, clearCart, totalItemCount, finalTotal, toast } = useCart();
 
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   // useMemo: category chips derived from the product data instead of hardcoded
   const categories = useMemo(
@@ -42,6 +34,7 @@ export default function ShopScreen({ loggedInUser, onLogout }) {
   );
 
   const handleCheckout = () => {
+    setIsCartOpen(false);
     Alert.alert(
       'Order Placed! 🎉',
       `Thank you for your purchase of ${totalItemCount} item(s) for ${formatPrice(finalTotal)}.`,
@@ -67,13 +60,21 @@ export default function ShopScreen({ loggedInUser, onLogout }) {
           </View>
         </View>
 
-        {/* REAL-TIME CART COUNT */}
-        <View className="mr-3">
-          <Text className="text-2xl">🛒</Text>
-          <View className="absolute -top-1 -right-2 bg-rose-500 min-w-5 h-5 px-1 rounded-full items-center justify-center">
-            <Text className="text-white text-[10px] font-black">{totalItemCount}</Text>
-          </View>
-        </View>
+        {/* REAL-TIME CART COUNT: tap to open the cart */}
+        <TouchableOpacity
+          onPress={() => setIsCartOpen(true)}
+          activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel={`Open cart, ${totalItemCount} items`}
+          className="mr-3 w-11 h-11 bg-slate-800 border border-slate-700 rounded-2xl items-center justify-center"
+        >
+          <Text className="text-xl">🛒</Text>
+          {totalItemCount > 0 && (
+            <View className="absolute -top-1.5 -right-1.5 bg-rose-500 min-w-5 h-5 px-1 rounded-full items-center justify-center">
+              <Text className="text-white text-[10px] font-black">{totalItemCount}</Text>
+            </View>
+          )}
+        </TouchableOpacity>
 
         <TouchableOpacity
           onPress={onLogout}
@@ -134,28 +135,7 @@ export default function ShopScreen({ loggedInUser, onLogout }) {
             </View>
           </View>
 
-          {cart.length === 0 ? (
-            <View className="bg-slate-900 p-8 rounded-3xl border border-slate-800 items-center justify-center">
-              <Text className="text-4xl mb-3">🛍️</Text>
-              <Text className="text-white font-bold text-base mb-1">Your cart is empty</Text>
-              <Text className="text-slate-400 text-xs text-center">
-                Tap "Add to Cart" on any product above to start building your setup.
-              </Text>
-            </View>
-          ) : (
-            <View className="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden">
-              {cart.map((item, index) => (
-                <CartItem
-                  key={item.id}
-                  item={item}
-                  isLast={index === cart.length - 1}
-                  onIncrease={addToCart}
-                  onDecrease={decreaseQuantity}
-                  onRemove={removeFromCart}
-                />
-              ))}
-            </View>
-          )}
+          <CartList />
         </View>
 
         {/* TOTALS & VOUCHER SECTION */}
@@ -183,6 +163,12 @@ export default function ShopScreen({ loggedInUser, onLogout }) {
           </TouchableOpacity>
         </View>
       )}
+
+      <CartModal
+        visible={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        onCheckout={handleCheckout}
+      />
 
       <Toast toast={toast} />
     </SafeAreaView>
